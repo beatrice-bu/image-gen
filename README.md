@@ -1,6 +1,9 @@
 # image-gen
 This project generates a labeled data set using a set of 3D models.
 
+# How to Run
+`blender --background base.blend --python generate_image.py`
+
 # Setup 
 ## Install Requirements
 `pip install -r requirements.txt`

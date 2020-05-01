@@ -32,6 +32,17 @@ def look_at(obj_camera, point):
     # assume we're using euler rotation
     obj_camera.rotation_euler = rot_quat.to_euler()
 
+
+def create_lights():
+    lights = []
+    center = mathutils.Vector((0, 0, 0))
+    for x in range(0, random.randint(1,4)):
+        bpy.ops.object.light_add(type='POINT', radius=1.0, location=random_point(center, 3, 15))
+        light = bpy.context.selected_objects[0]
+        light.data.energy = random.uniform(250.0,2000.0)
+        lights.append(bpy.context.selected_objects[0])
+    return lights
+
 # The direcetory that contains the models we want to include to label in our data.
 model_directory = "models"
 
@@ -43,7 +54,7 @@ output_directory = "/Users/dougmatthews/Repos/image-gen/renders"
 background_directory = ""
 
 # Total number of images generated
-num_images = 100
+num_images = 30
 
 images_per_model = int(num_images / len(models))
 
@@ -61,17 +72,23 @@ for model_path in models:
     imported_model.scale = (0.1, 0.1, 0.1)
     print(imported_model)
 
+    mesh = imported_model.data
+    for f in mesh.polygons:
+        f.use_smooth = True
+
+    lights = []
+
     # Render images
     for image in range(0, images_per_model):
+        
+        
+        imported_model.data.materials[0].node_tree.nodes["Principled BSDF"].inputs[0].default_value = (random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1), 1)
         camera = bpy.context.scene.camera
-        print(camera)
         center = mathutils.Vector((0, 0, 0))
 
-        camera.location = random_point(center, 9, 20)
+        camera.location = random_point(center, 4, 20)
 
         point = random_point(center, 0, 1)
-        print(camera.location)
-        print(camera.matrix_world.to_translation())
         look_at(camera, point)
 
         bpy.context.scene.render.engine = 'CYCLES'
@@ -79,5 +96,15 @@ for model_path in models:
         bpy.context.scene.render.image_settings.file_format='PNG' 
         bpy.context.scene.render.image_settings.compression = 90
 
+        # Create lights
+        bpy.ops.object.select_all(action='DESELECT')
+        for light in lights: 
+            light.select_set(True)
+        bpy.ops.object.delete()
+        lights = create_lights()
+
         bpy.context.scene.render.filepath = os.path.join(output_directory, f'{name}-{str(image)}.png')
         bpy.ops.render.render(write_still=True)
+
+    imported_model.select_set(True)
+    bpy.ops.object.delete()
