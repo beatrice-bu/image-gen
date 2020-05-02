@@ -2,6 +2,7 @@
 .vscode
 *.blend1
 renders/
+renders2/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

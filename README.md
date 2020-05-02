@@ -23,3 +23,7 @@ Activate the Virtual Environment
 
 Or on mac:
 `source venv/bin/activate`
+
+
+# More to look into 
+https://www.immersivelimit.com/tutorials/composing-images-with-python-for-synthetic-datasets

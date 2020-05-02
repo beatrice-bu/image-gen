@@ -4,6 +4,7 @@ import glob
 import random
 import math
 import mathutils
+import uuid
 
 def random_point(center, inner_radius, outer_radius):
     u = random.uniform(0, 1)
@@ -48,21 +49,36 @@ model_directory = "models"
 
 models = glob.glob(os.path.join(model_directory, "*.dae"))
 
+# labels =[]
+# for model in models:
+#     labels.append(os.path.splitext(os.path.basename(model))[0])
+
+# print(labels)
+
+# while( True):
+#     test = 5
+
 output_directory = "/Users/dougmatthews/Repos/image-gen/renders"
 
 # The directory that contains backgrounds to use in our data.
 background_directory = ""
 
 # Total number of images generated
-num_images = 30
+num_images = 5000
 
 images_per_model = int(num_images / len(models))
 
 print (images_per_model)
 
+count = 0
 for model_path in models:
     name = os.path.splitext(os.path.basename(model_path))[0]
-    bpy.ops.wm.collada_import(filepath=model_path, )
+    bpy.ops.wm.collada_import(filepath=model_path)
+
+    try: 
+        os.mkdir(os.path.join(output_directory, name))
+    except:
+        print("Directory already exists.")
 
     # make sure to get all imported objects
     if len(bpy.context.selected_objects) > 1:
@@ -86,12 +102,16 @@ for model_path in models:
         camera = bpy.context.scene.camera
         center = mathutils.Vector((0, 0, 0))
 
-        camera.location = random_point(center, 4, 20)
+        camera.location = random_point(center, 6, 9)
 
         point = random_point(center, 0, 1)
         look_at(camera, point)
 
-        bpy.context.scene.render.engine = 'CYCLES'
+        if random.uniform(0.0,1.0) < 0.9:
+            bpy.context.scene.render.engine = 'BLENDER_EEVEE'
+        else:
+            bpy.context.scene.render.engine = 'CYCLES'
+
         bpy.context.scene.render.image_settings.color_mode ='RGBA'
         bpy.context.scene.render.image_settings.file_format='PNG' 
         bpy.context.scene.render.image_settings.compression = 90
@@ -103,8 +123,19 @@ for model_path in models:
         bpy.ops.object.delete()
         lights = create_lights()
 
-        bpy.context.scene.render.filepath = os.path.join(output_directory, f'{name}-{str(image)}.png')
+        
+        bpy.context.scene.render.filepath = os.path.join(output_directory, name, f'{str(uuid.uuid1().hex)}.png')
         bpy.ops.render.render(write_still=True)
+        print(f"\033[92m{count/num_images}")
+        print(f"\033[0m")
+        count+=1
 
+
+        
+    # Delete lights and model
+    bpy.ops.object.select_all(action='DESELECT')
+    for light in lights: 
+        light.select_set(True)
     imported_model.select_set(True)
     bpy.ops.object.delete()
+
