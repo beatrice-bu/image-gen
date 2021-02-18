@@ -4,6 +4,7 @@ import glob
 import random
 import math
 import mathutils
+import sys
 
 
 def random_point(center, inner_radius, outer_radius):
@@ -19,7 +20,7 @@ def random_point(center, inner_radius, outer_radius):
     x = r * sinPhi * cosTheta
     y = r * sinPhi * sinTheta
     z = r * cosPhi
-    return  mathutils.Vector((x, y, z)) + center
+    return  mathutils.Vector((x, y, (z/2))) + center
 
 
 def look_at(obj_camera, point):
@@ -48,7 +49,7 @@ def create_lights():
 # The direcetory that contains the models we want to include to label in our data.
 model_directory = "models"
 
-models = glob.glob(os.path.join(model_directory, "*.obj"))
+models = glob.glob(os.path.join(model_directory, "*.dae"))
 
 output_directory = "D:/Programming/github/image-gen/renders"
 
@@ -56,11 +57,12 @@ output_directory = "D:/Programming/github/image-gen/renders"
 background_directory = ""
 
 # Total number of images generated
-num_images = 30
+num_images = 5
 
-images_per_model = int(num_images / len(models))
+images_per_model = num_images
+#int(num_images / len(models))
 
-print (images_per_model)
+print (f'Rendering {images_per_model} images')
 
 for model_path in models:
     name = os.path.splitext(os.path.basename(model_path))[0]
@@ -75,8 +77,8 @@ for model_path in models:
     print(imported_model)
 
     mesh = imported_model.data
-    for f in mesh.polygons:
-        f.use_smooth = True
+    #for f in mesh.polygons:
+    #    f.use_smooth = True
 
     lights = []
 
@@ -84,7 +86,7 @@ for model_path in models:
     for image in range(0, images_per_model):
         
         
-        imported_model.data.materials[0].node_tree.nodes["Principled BSDF"].inputs[0].default_value = (random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1), 1)
+        #imported_model.data.materials[0].node_tree.nodes["Principled BSDF"].inputs[0].default_value = (random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1), 1)
         camera = bpy.context.scene.camera
         center = mathutils.Vector((0, 0, 0))
 
