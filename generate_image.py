@@ -57,7 +57,7 @@ output_directory = "D:/Programming/github/image-gen/renders"
 background_directory = ""
 
 # Total number of images generated
-num_images = 5
+num_images = 500
 
 images_per_model = num_images
 #int(num_images / len(models))
