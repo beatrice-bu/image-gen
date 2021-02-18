@@ -5,6 +5,7 @@ import random
 import math
 import mathutils
 
+
 def random_point(center, inner_radius, outer_radius):
     u = random.uniform(0, 1)
     v = random.uniform(0, 1)
@@ -19,6 +20,7 @@ def random_point(center, inner_radius, outer_radius):
     y = r * sinPhi * sinTheta
     z = r * cosPhi
     return  mathutils.Vector((x, y, z)) + center
+
 
 def look_at(obj_camera, point):
     print(point)
@@ -46,9 +48,9 @@ def create_lights():
 # The direcetory that contains the models we want to include to label in our data.
 model_directory = "models"
 
-models = glob.glob(os.path.join(model_directory, "*.dae"))
+models = glob.glob(os.path.join(model_directory, "*.obj"))
 
-output_directory = "/Users/dougmatthews/Repos/image-gen/renders"
+output_directory = "D:/Programming/github/image-gen/renders"
 
 # The directory that contains backgrounds to use in our data.
 background_directory = ""
@@ -65,8 +67,8 @@ for model_path in models:
     bpy.ops.wm.collada_import(filepath=model_path, )
 
     # make sure to get all imported objects
-    if len(bpy.context.selected_objects) > 1:
-        raise Exception("Error", "Image generation expects imported model to only have one object.")
+    #if len(bpy.context.selected_objects) > 1:
+    #    raise Exception("Error", "Image generation expects imported model to only have one object.")
 
     imported_model = bpy.context.selected_objects[0]
     imported_model.scale = (0.1, 0.1, 0.1)
