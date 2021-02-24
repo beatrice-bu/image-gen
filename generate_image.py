@@ -20,7 +20,7 @@ def random_point(center, inner_radius, outer_radius):
     x = r * sinPhi * cosTheta
     y = r * sinPhi * sinTheta
     z = r * cosPhi
-    return  mathutils.Vector((x, y, (z/2))) + center
+    return  mathutils.Vector((x, y, z)) + center
 
 
 def look_at(obj_camera, point):
@@ -57,7 +57,7 @@ output_directory = "D:/Programming/github/image-gen/renders"
 background_directory = ""
 
 # Total number of images generated
-num_images = 500
+num_images = 5
 
 images_per_model = num_images
 #int(num_images / len(models))
@@ -90,7 +90,7 @@ for model_path in models:
         camera = bpy.context.scene.camera
         center = mathutils.Vector((0, 0, 0))
 
-        camera.location = random_point(center, 4, 20)
+        camera.location = random_point(center, 0, 4)
 
         point = random_point(center, 0, 1)
         look_at(camera, point)
